@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CookieSettingsButton } from "@/components/CookieBanner";
-import { IconInfo, IconMail, IconPhone } from "@/components/icons";
+import { IconMail, IconPhone } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Datenschutz",
@@ -21,14 +21,6 @@ export default function DatenschutzPage() {
 
       <section className="recht" style={{ paddingTop: 64 }}>
         <div className="wrap">
-          <p className="vorlage">
-            <IconInfo />
-            <span>
-              <strong>Vorlage:</strong> Diese Datenschutzerklärung ist ein Entwurf und muss vom Betreiber vor der
-              Veröffentlichung geprüft und ergänzt werden.
-            </span>
-          </p>
-
           <h2>Verantwortlich</h2>
           <div className="karte">
             <p style={{ marginBottom: 4 }}>
@@ -60,10 +52,11 @@ export default function DatenschutzPage() {
 
           <h2>Hosting und Server-Logfiles</h2>
           <p>
-            Diese Website wird bei <strong>[Hosting-Anbieter – noch zu ergänzen]</strong> betrieben. Beim Aufruf
-            einer Seite verarbeitet der Anbieter technisch notwendige Daten wie IP-Adresse, Datum und Uhrzeit, die
-            aufgerufene Seite und den verwendeten Browser. Diese Daten dienen nur dem sicheren und stabilen Betrieb
-            und werden nicht mit anderen Daten zusammengeführt.
+            Diese Website läuft auf einem Server der <strong>Hetzner Online GmbH</strong>, Industriestrasse 25,
+            91710 Gunzenhausen, Deutschland, im Rechenzentrum Nürnberg. Deutschland bietet einen angemessenen
+            Datenschutz im Sinne des DSG. Beim Aufruf einer Seite verarbeitet der Server technisch notwendige Daten
+            wie IP-Adresse, Datum und Uhrzeit, die aufgerufene Seite und den verwendeten Browser. Diese Daten dienen
+            nur dem sicheren und stabilen Betrieb und werden nicht mit anderen Daten zusammengeführt.
           </p>
 
           <h2>Kontakt und Reservation per E-Mail</h2>

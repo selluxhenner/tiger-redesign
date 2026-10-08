@@ -2547,23 +2547,6 @@ footer {
   font-weight: 600;
 }
 
-/* ---------- datenschutz ---------- */
-.recht .vorlage {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-bottom: 36px;
-  background: rgba(242, 163, 27, 0.14);
-  border: 1.5px dashed #b4711a;
-  border-radius: var(--r-btn);
-  padding: 14px 18px;
-}
-
-.recht .vorlage .ic {
-  color: #a5651a;
-  margin-top: 4px;
-}
-
 /* Nur noch für die zwei Fotos bei «Tag» und «Thai» – Text und Inhalte stehen sofort */
 .reveal {
   opacity: 0;
