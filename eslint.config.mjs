@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scraping-Hilfsskript für die alte Seite, kein App-Code.
+    "source-mockup/**",
   ]),
 ]);
 

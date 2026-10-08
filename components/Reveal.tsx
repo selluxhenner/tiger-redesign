@@ -15,10 +15,6 @@ export function Reveal({ children, as: Tag = "div", className = "", ...rest }: R
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      setInView(true);
-      return;
-    }
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

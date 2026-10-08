@@ -3,7 +3,7 @@ export type OpenState =
   | { offen: false; ab: number; heute: boolean };
 
 // [start, end] in minutes since midnight, per weekday (0=Sun..6=Sat). End can exceed 1440 for after-midnight closing.
-const SCHED: Record<number, [number, number][]> = {
+export const SCHED: Record<number, [number, number][]> = {
   0: [[570, 1080]],
   1: [[960, 1440]],
   2: [[510, 1440]],
@@ -44,14 +44,19 @@ export const PHASEN: [number, number, string][] = [
   [1320, 1560, "Bar-Zeit"],
 ];
 
-export function statusText(s: OpenState): { label: string; sub: string } {
-  if (s.offen) {
-    return { label: "Jetzt offen", sub: `bis ${fmt(s.bis)} Uhr` };
-  }
-  if (s.heute) {
-    return { label: "Geschlossen", sub: `öffnet um ${fmt(s.ab)} Uhr` };
-  }
-  return { label: "Geschlossen", sub: `öffnet morgen um ${fmt(s.ab)} Uhr` };
+export type Angebot = "tag" | "abig";
+
+/** Ist der Tiger am Wochentag `day` zwischen `von` und `bis` (Minuten ab Mitternacht) mindestens teilweise offen? */
+export function offenZwischen(day: number, von: number, bis: number): boolean {
+  return SCHED[day].some(([a, b]) => a < bis && b > von);
+}
+
+// Kernzeiten der Küchen: Zmittag 11:30–14:00, Thai 18:00–21:00.
+const ANGEBOT_ZEIT: Record<Angebot, [number, number]> = { tag: [690, 840], abig: [1080, 1260] };
+
+export function bietet(day: number, angebot: Angebot): boolean {
+  const [von, bis] = ANGEBOT_ZEIT[angebot];
+  return offenZwischen(day, von, bis);
 }
 
 export const OZ_ROWS: { day: number; label: string; hours: string }[] = [

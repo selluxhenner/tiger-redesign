@@ -1,108 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { openState, fmt, PHASEN } from "@/lib/hours";
+import { useNow } from "@/hooks/useNow";
+import { fmt, offenZwischen, openState, PHASEN } from "@/lib/hours";
 
-const easeOut = [0.22, 1, 0.36, 1] as const;
+// Vier gleich breite Abschnitte, passend zu den vier Spalten darunter. [von, bis) in Minuten ab Mitternacht
+// (über 1440 = nach Mitternacht). `kern` ist die Zeit, in der das Angebot wirklich läuft – danach wird gedimmt.
+const SEGMENTE = [
+  { von: 510, bis: 690, kern: [510, 690], t: "08:30", l: "Kafi & Gipfeli", text: "Der Tag beginnt am Stammtisch." },
+  { von: 690, bis: 1080, kern: [690, 840], t: "Mittag", l: "Gut\u00adbürgerlich", text: "Heinz tischt Schweizer Klassiker auf." },
+  { von: 1080, bis: 1320, kern: [1080, 1320], t: "18:00", l: "Thai-Küche", text: "Alex feuert die Woks an – mit Reservation." },
+  { von: 1320, bis: 1560, kern: [1320, 1560], t: "Spät", l: "Bar-Betrieb", text: "Fr & Sa bis 02:00 Uhr. Abgmacht." },
+] as const;
 
-const TICKS = [
-  { t: "08:30", l: "Kafi & Gipfeli", text: "Der Tag beginnt am Stammtisch." },
-  { t: "Mittag", l: "Gutbürgerlich", text: "Heinz tischt Schweizer Klassiker auf." },
-  { t: "18:00", l: "Thai-Küche", text: "Alex feuert die Woks an – mit Reservation." },
-  { t: "Spät", l: "Bar-Betrieb", text: "Fr & Sa bis 02:00 Uhr. Abgmacht." },
-];
+function lageAm(now: Date) {
+  let mins = now.getHours() * 60 + now.getMinutes();
+  let tag = now.getDay();
+  // Bis 02:00 gehört die Nacht noch zum Vortag.
+  if (mins < 120) {
+    mins += 1440;
+    tag = (tag + 6) % 7;
+  }
+  const s = openState(now);
+  const seg = s.offen ? SEGMENTE.findIndex((x) => mins >= x.von && mins < x.bis) : -1;
+  const marker = seg >= 0 ? (seg + (mins - SEGMENTE[seg].von) / (SEGMENTE[seg].bis - SEGMENTE[seg].von)) * 25 : null;
+
+  let phase: string;
+  if (s.offen) phase = PHASEN.find(([a, b]) => mins >= a && mins < b)?.[2] ?? "offen";
+  else phase = s.heute ? `geschlossen, ab ${fmt(s.ab)} Uhr offen` : `geschlossen, morgen ab ${fmt(s.ab)} Uhr offen`;
+
+  const zu = SEGMENTE.map((x, i) => i !== seg && !offenZwischen(tag, x.kern[0], x.kern[1]));
+  return { marker, phase, zu };
+}
 
 export function TigerzeitDial() {
-  const [marker, setMarker] = useState<{ left: number } | null>(null);
-  const [phase, setPhase] = useState("–");
-
-  useEffect(() => {
-    const render = () => {
-      const now = new Date();
-      let mins = now.getHours() * 60 + now.getMinutes();
-      if (mins < 120) mins += 1440;
-      const s = openState(now);
-      if (mins >= 510 && mins <= 1560 && s.offen) {
-        const p = ((mins - 510) / (1560 - 510)) * 100;
-        setMarker({ left: p });
-        let label = "Offe";
-        for (const [a, b, l] of PHASEN) {
-          if (mins >= a && mins < b) {
-            label = l;
-            break;
-          }
-        }
-        setPhase(label);
-      } else {
-        setMarker(null);
-        setPhase(s.offen ? "Offe" : s.heute ? `de Tiger schlaft no – ab ${fmt(s.ab)} Uhr für dich da` : "de Tiger schlaft – bis morn!");
-      }
-    };
-    render();
-    const id = setInterval(render, 60000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow();
+  const lage = now ? lageAm(now) : null;
 
   return (
-    <div className="zeitstrip" aria-label="Ein Tag im Tiger – live">
+    <div className="zeitstrip">
       <div className="wrap">
-        <motion.div
-          className="dial-head"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.55, ease: easeOut }}
-        >
-          <span className="hand">En Tag im Tiger</span>
-          <span className="dial-now" role="status">
-            Jetzt: <strong>{phase}</strong>
-          </span>
-        </motion.div>
-        <motion.div
-          className="dial-track"
-          aria-hidden="true"
-          initial={{ scaleX: 0, opacity: 0 }}
-          whileInView={{ scaleX: 1, opacity: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.9, delay: 0.25, ease: easeOut }}
-          style={{ transformOrigin: "left center" }}
-        >
-          <motion.span
-            className={"dial-marker" + (marker ? " an" : "")}
-            style={marker ? { left: `${marker.left}%` } : undefined}
-            title="Jetzt"
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.45, delay: 1.05, ease: easeOut }}
-          />
-        </motion.div>
-        <motion.div
-          className="dial-ticks"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.5 }}
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.14, delayChildren: 0.45 } },
-          }}
-        >
-          {TICKS.map((tick) => (
-            <motion.div
-              className="dial-tick"
-              key={tick.t}
-              variants={{
-                hidden: { opacity: 0, y: 18 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easeOut } },
-              }}
-            >
-              <div className="t">{tick.t}</div>
-              <div className="l">{tick.l}</div>
-              {tick.text}
-            </motion.div>
+        <p className="dial-titel hand">En Tag im Tiger</p>
+        {lage && <p className="sr-only">Jetzt: {lage.phase}</p>}
+        <div className="dial-track" aria-hidden="true">
+          <div className="dial-segs">
+            {SEGMENTE.map((x, i) => (
+              <span key={x.t} className={"dial-seg" + (lage?.zu[i] ? " zu" : "")} />
+            ))}
+          </div>
+          {lage?.marker != null && <span className="dial-marker" style={{ left: `${lage.marker}%` }} />}
+        </div>
+        <ol className="dial-ticks">
+          {SEGMENTE.map((x, i) => (
+            <li key={x.t} className={"dial-tick" + (lage?.zu[i] ? " zu" : "")}>
+              <span className="t">{x.t}</span>
+              <span className="l">{x.l}</span>
+              <span className="d">{x.text}</span>
+              {lage?.zu[i] && <span className="sr-only"> (heute nicht)</span>}
+            </li>
           ))}
-        </motion.div>
+        </ol>
       </div>
     </div>
   );

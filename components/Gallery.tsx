@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Reveal } from "@/components/Reveal";
 import { IconChevronLeft, IconChevronRight, IconClose } from "@/components/icons";
 
 export type GalleryImage = {
@@ -78,8 +77,7 @@ export function Gallery({
     <>
       <div className={variant === "masonry" ? "gal-masonry" : "gal"} id="gal">
         {images.map((img, i) => (
-          <Reveal
-            as="figure"
+          <figure
             key={img.src}
             className={variant === "grid" ? img.className ?? "" : ""}
             tabIndex={0}
@@ -98,11 +96,15 @@ export function Gallery({
               alt={img.alt}
               width={img.portrait ? 600 : 800}
               height={img.portrait ? 800 : 600}
-              sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+              sizes={
+                variant === "grid"
+                  ? "(max-width: 760px) 100vw, min(800px, 60vw)"
+                  : "(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
+              }
               loading="lazy"
             />
             <figcaption>{img.caption}</figcaption>
-          </Reveal>
+          </figure>
         ))}
       </div>
 

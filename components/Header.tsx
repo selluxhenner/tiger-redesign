@@ -4,19 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
-import { StatusChip } from "@/components/StatusChip";
 import { IconChevronRight, IconClose, IconFacebook, IconMail, IconMenu, IconPhone } from "@/components/icons";
 
 const NAV_ITEMS = [
-  { id: "ueberuns", label: "Über uns" },
-  { id: "menu", label: "Menu" },
-  { id: "kontakt", label: "Kontakt" },
+  { id: "menu", label: "Speisekarte" },
+  { id: "zeiten", label: "Kontakt" },
   { id: "galerie", label: "Galerie", href: "/galerie" },
   { id: "events", label: "Events", href: "/events" },
 ];
 
-const SPY_IDS = ["tag", "thai", "erwarten", "ueberuns", "galerie", "menu", "events", "zeiten", "kontakt"];
+const SPY_IDS = ["tag", "thai", "ueberuns", "galerie", "menu", "events", "zeiten"];
 
 export function Header() {
   const pathname = usePathname();
@@ -66,23 +63,10 @@ export function Header() {
         Zum Inhalt springen
       </a>
 
-      <motion.header
-        className="top"
-        initial={{ y: -90, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      >
+      <header className="top">
         <nav className="nav" aria-label="Hauptnavigation">
           <Link className="nav-logo" href={isHome ? "#top" : "/"} aria-label="Tiger Wil – zur Startseite">
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              style={{ display: "inline-flex" }}
-            >
-              <Image src="/images/logo.png" alt="Tiger Wil Logo" width={140} height={44} style={{ height: 44, width: "auto" }} priority />
-            </motion.span>
-            <StatusChip variant="nav" />
+            <Image src="/images/logo.png" alt="Tiger Wil Logo" width={140} height={44} style={{ height: 44, width: "auto" }} priority />
           </Link>
           <button
             className="nav-toggle"
@@ -93,46 +77,30 @@ export function Header() {
           >
             <IconMenu />
           </button>
-          <motion.ul
-            className="nav-links"
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: {},
-              show: { transition: { staggerChildren: 0.06, delayChildren: 0.35 } },
-            }}
-          >
+          <ul className="nav-links">
             {NAV_ITEMS.map((item) =>
               item.href ? (
-                <motion.li
-                  key={item.id}
-                  variants={{ hidden: { opacity: 0, y: -8 }, show: { opacity: 1, y: 0 } }}
-                  transition={{ duration: 0.4 }}
-                >
+                <li key={item.id}>
                   <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined}>
                     {item.label}
                   </Link>
-                </motion.li>
+                </li>
               ) : (
-                <motion.li
-                  key={item.id}
-                  variants={{ hidden: { opacity: 0, y: -8 }, show: { opacity: 1, y: 0 } }}
-                  transition={{ duration: 0.4 }}
-                >
+                <li key={item.id}>
                   <Link href={anchorHref(item.id)} aria-current={isHome && activeId === item.id ? "true" : undefined}>
                     {item.label}
                   </Link>
-                </motion.li>
+                </li>
               )
             )}
-            <motion.li variants={{ hidden: { opacity: 0, y: -8 }, show: { opacity: 1, y: 0 } }} transition={{ duration: 0.4 }}>
+            <li>
               <Link className="nav-cta" href={anchorHref("reservieren")}>
                 Reservieren
               </Link>
-            </motion.li>
-          </motion.ul>
+            </li>
+          </ul>
         </nav>
-      </motion.header>
+      </header>
 
       <div
         className={"drawer-backdrop" + (drawerOpen ? " an" : "")}

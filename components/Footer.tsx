@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { CookieSettingsButton } from "@/components/CookieBanner";
 import { IconFacebook, IconMail } from "@/components/icons";
 
 export function Footer() {
@@ -15,7 +16,7 @@ export function Footer() {
             <Link href="/galerie">Galerie</Link>
           </li>
           <li>
-            <Link href="/#menu">Menu</Link>
+            <Link href="/#menu">Speisekarte</Link>
           </li>
           <li>
             <Link href="/events">Events</Link>
@@ -28,6 +29,12 @@ export function Footer() {
           </li>
           <li>
             <Link href="/impressum">Impressum</Link>
+          </li>
+          <li>
+            <Link href="/datenschutz">Datenschutz</Link>
+          </li>
+          <li>
+            <CookieSettingsButton />
           </li>
         </ul>
         <div className="sozial">

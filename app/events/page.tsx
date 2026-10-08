@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Reveal } from "@/components/Reveal";
 import { IconExternalLink, IconMail, IconMask, IconPhone, IconUtensils } from "@/components/icons";
 import { POSTS } from "@/lib/posts";
 import { BreadcrumbJsonLd } from "@/components/BreadcrumbJsonLd";
@@ -38,7 +37,7 @@ export default function EventsPage() {
         <div className="wrap">
           <span className="eyebrow">was als Nächstes chunt</span>
           <h2 className="big">Nächste Events</h2>
-          <Reveal as="div" className="ev-none">
+          <div className="ev-none">
             Zurzeit sind keine Events geplant.
             <br />
             Aktuelle Ankündigungen gibt&apos;s immer zuerst auf{" "}
@@ -51,20 +50,22 @@ export default function EventsPage() {
               Facebook <IconExternalLink />
             </a>{" "}
             – es lohnt sich, wieder vorbeizuschauen.
-          </Reveal>
+          </div>
 
           <div style={{ marginTop: 56 }}>
             <span className="eyebrow">immer up to date</span>
             <h2 className="big">Neuigkeiten</h2>
-            <div className="news-grid">
+            <ul className="news-liste">
               {POSTS.map((post) => (
-                <Reveal as="article" className="news-card" key={post.title}>
-                  {post.date && <span className="datum">{post.date}</span>}
-                  <h3>{post.title}</h3>
+                <li className="news-item" key={post.title}>
+                  <div>
+                    {post.date && <span className="datum">{post.date}</span>}
+                    <h3>{post.title}</h3>
+                  </div>
                   <p>{post.excerpt}</p>
-                </Reveal>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </section>
@@ -74,7 +75,7 @@ export default function EventsPage() {
           <span className="eyebrow">d&apos;Klassiker</span>
           <h2 className="big">Zwei Feste, die man kennt</h2>
 
-          <Reveal as="div" className="ev-gross">
+          <div className="ev-gross">
             <div className="bild">
               <Image
                 src="/images/fassnacht25_10.jpg"
@@ -95,9 +96,9 @@ export default function EventsPage() {
                 <IconMask /> Jeweils zur Fasnachtszeit
               </span>
             </div>
-          </Reveal>
+          </div>
 
-          <Reveal as="div" className="ev-gross">
+          <div className="ev-gross">
             <div className="text">
               <h3 className="hand">D&apos;Metzgete</h3>
               <p>
@@ -117,9 +118,9 @@ export default function EventsPage() {
                 loading="lazy"
               />
             </div>
-          </Reveal>
+          </div>
 
-          <Reveal as="div" className="privat-box">
+          <div className="privat-box">
             <div>
               <h3>Dein Fest im Tiger</h3>
               <p>
@@ -135,7 +136,7 @@ export default function EventsPage() {
                 <IconPhone /> 071 910 23 53
               </a>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
     </>
